@@ -147,6 +147,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                   <EditIcon onClick={editRow}/>
                 </Fab>
               </TableCell>
+
+
+              
               
             </TableRow>
           ))}
