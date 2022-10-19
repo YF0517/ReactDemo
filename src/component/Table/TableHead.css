@@ -1,0 +1,34 @@
+.uparrow{
+  color: aqua;
+  opacity: 0;
+  
+}
+
+.downarrow{
+  color: aqua;
+  cursor: pointer;
+  opacity: 100;
+}
+
+.uparrow:hover{
+  cursor: pointer;
+  opacity: 100;
+  transition: 0.5s;
+  
+}
+
+.fixarrow{
+  display:inline-block;
+  position:absolute;
+  top:-1
+}
+
+
+.tablehead{
+  position: relative;
+}
+
+.button{
+  border: 0;
+  background-color: white;
+}
