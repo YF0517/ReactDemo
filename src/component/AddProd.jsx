@@ -7,11 +7,6 @@ import {useEffect, useState} from 'react';
 const AddProd = () => {
   
   const token = localStorage.getItem("token")
-  const config = {
-    headers: { 
-      'Authorization': 'Bearer ' + token 
-    }
-  }
 
   // const newConfig = {
   //          ...config,

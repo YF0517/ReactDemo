@@ -5,7 +5,6 @@ import Page from './component/Page';
 import Head from './component/Head';
 import Login from './component/Login';
 import {Route,Routes} from 'react-router-dom';
-import AddProd from './component/AddProd';
 
 
 
@@ -42,6 +41,19 @@ function App() {
       console.log(list)
   }
   
+  //change row
+  const updateSearch = (items,id) => {
+    const newState = search.map((item) => {
+                                              if(item.id === id){
+                                                return items
+                                              }
+                                              return item
+                                            })
+    setSearch(newState)
+    
+  } 
+
+
 
   //filter
   const Ascending = (item) => {
@@ -81,9 +93,10 @@ function App() {
         <Routes>
 
             <Route path='/page' element ={
-            <><Head filterItems={filterItems}/>
-            <Page products={search} onAscend={Ascending} onDescend={Descending} />
-            <AddProd />
+            <>
+              <Head filterItems={filterItems}/>
+              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch}/>
+              {/* <AddProd /> */}
             </>
             } />
             

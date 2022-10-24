@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import TableHead from './Table/TableHead'
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
@@ -18,6 +18,10 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import './Page.css';
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import axios from 'axios';
+
+
 
 
 
@@ -87,13 +91,27 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend}) {
+export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch}) {
   const rows = products
+  const [edit, setEdit] = useState(false)
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowId, setRowId] = useState([])
+
+  const[name, setName] = useState([])
+  const[descrip, setDescrip] = useState([])
+  const[price, setPrice] = useState([])
+
+  const token = localStorage.getItem("token")
+  const bodyParameters = {
+    title: name,
+    description: descrip,
+    price: price,
+
+       }
   
   
-  
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -108,9 +126,22 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     setPage(0);
   };
 
-  const editRow = () =>{
-    console.log("hiii")
+
+
+  //edit and save
+  const editRow = (id) => {
+    setEdit(true)
+    setRowId(id)
   }
+  const saveRow = () => {
+    let list
+    axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
+    .then((res) => { list = res.data; updateSearch(list,rowId); console.log(list)} ).catch((err)=>{console.log(err)})
+    setEdit(false)
+  }
+
+  
+  
 
   return (
     <div className='page'>
@@ -124,33 +155,28 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
-          ).map((row) => (
-            <TableRow key={row.id}>
+          ).map(row => (
+            <TableRow key={row.id} >
               <TableCell style={{ width: 160 }} align="left">
                 {row.id}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                {row.title}
+                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setName(e.target.value)}} /> : row.title}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                {row.description}
+                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setDescrip(e.target.value)}}/> : row.description}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 <img style={{ width: 100 }} src={(row.product_image&&`https://app.spiritx.co.nz/storage/${row.product_image}`)} alt={row.product_image}/>
-                
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                {row.price}
+                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setPrice(e.target.value)}}/> : row.price}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 <Fab  aria-label="edit">
-                  <EditIcon onClick={editRow}/>
+                  {edit && rowId === row.id ? <AddIcon onClick={saveRow} /> : <EditIcon onClick={() => {editRow(row.id)}}/>}
                 </Fab>
               </TableCell>
-
-
-              
-              
             </TableRow>
           ))}
 
