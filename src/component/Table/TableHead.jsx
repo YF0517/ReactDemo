@@ -4,6 +4,8 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import './TableHead.css'
 import {useState} from 'react';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 
 
 
@@ -86,6 +88,11 @@ const TableHead = ({onAscend,onDescend}) => {
 
   return (
     <thead>
+      <TableRow>
+        <Fab color="primary" aria-label="add" >
+            <AddIcon />
+        </Fab>
+      </TableRow>
       <TableRow >
         {columns.map((column) => (
           

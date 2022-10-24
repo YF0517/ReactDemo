@@ -129,11 +129,13 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
 
   //edit and save
-  const editRow = (id) => {
+  const editRow = (id,e) => {
+    
     setEdit(true)
     setRowId(id)
   }
-  const saveRow = () => {
+  const saveRow = (e) => {
+    
     let list
     axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
     .then((res) => { list = res.data; updateSearch(list,rowId); console.log(list)} ).catch((err)=>{console.log(err)})
@@ -145,12 +147,14 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   return (
     <div className='page'>
+    
+
     {/* <button onClick={() => {onAscend("id")}}></button> */}
     <TableContainer component={Paper}>
+        
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
         <TableHead onAscend={onAscend} onDescend={onDescend}
-                  />
-        
+                  />     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
