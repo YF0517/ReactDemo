@@ -58,6 +58,11 @@ function App() {
     setSearch([...search, item])
   }
 
+  //delete row
+  const deletSearch = (id) => {
+    setSearch(search.filter((item) => item.id !== id))
+  }
+
 
 
   //filter
@@ -82,7 +87,7 @@ function App() {
     }
     if(item === "price"){
       const list = [...search].sort((a, b) => b.price - a.price);
-      console.log("hiii")
+      
       setSearch(list)
     }
     if(item === "name"){
@@ -100,7 +105,7 @@ function App() {
             <Route path='/page' element ={
             <>
               <Head filterItems={filterItems}/>
-              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch}/>
+              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch}/>
               {/* <AddProd /> */}
             </>
             } />

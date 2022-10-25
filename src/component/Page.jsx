@@ -19,6 +19,7 @@ import './Page.css';
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import axios from 'axios';
 
 
@@ -91,7 +92,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch}) {
+export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch}) {
   const rows = products
   const [edit, setEdit] = useState(false)
   const [page, setPage] = useState(0)
@@ -142,6 +143,12 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     setEdit(false)
   }
 
+  //delete
+  const deletRow = (id) => {
+    axios.delete(`https://app.spiritx.co.nz/api/product/${id}`, {headers: {'token': token} })
+    .then((res) => {console.log(res.data)}).catch((err) => {console.log(err)})
+    deletSearch(id)
+  }
   
   
 
@@ -179,6 +186,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
               <TableCell style={{ width: 160 }} align="center">
                 <Fab  aria-label="edit">
                   {edit && rowId === row.id ? <AddIcon onClick={saveRow} /> : <EditIcon onClick={() => {editRow(row.id)}}/>}
+                </Fab>
+                <Fab  aria-label="edit" style={{marginLeft:15}}>
+                  <DeleteForeverIcon onClick={() => deletRow(row.id)}/>
                 </Fab>
               </TableCell>
             </TableRow>
