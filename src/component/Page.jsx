@@ -154,7 +154,7 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
         <TableHead onAscend={onAscend} onDescend={onDescend}
-                  />     
+                  products={products}/>     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

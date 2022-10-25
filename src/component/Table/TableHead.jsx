@@ -6,11 +6,13 @@ import './TableHead.css'
 import {useState} from 'react';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import axios from 'axios';
 
 
 
 
-const TableHead = ({onAscend,onDescend}) => {
+const TableHead = ({onAscend,onDescend,products}) => {
   
   const [columns,setColumns]= useState([
     { 
@@ -50,6 +52,30 @@ const TableHead = ({onAscend,onDescend}) => {
     }
   ])
 
+
+ //add product
+ const [addname, setAddname] = useState([])
+ const [adddes, setAdddes] = useState([])
+ const [addprice, setAddprice] = useState([])
+ 
+ 
+ const token = localStorage.getItem("token")
+ const bodyParameters = {
+        title : addname,
+        description : adddes,
+        price : addprice,
+
+          
+     }
+ const [add, setAdd] = useState(false)
+
+ const addItem = () => {
+  setAdd(true)
+ } 
+
+ const saveItem = () => {
+  setAdd(false)
+ }
   
 
   //filtercontrol
@@ -89,10 +115,22 @@ const TableHead = ({onAscend,onDescend}) => {
   return (
     <thead>
       <TableRow>
-        <Fab color="primary" aria-label="add" >
-            <AddIcon />
-        </Fab>
+        <TableCell style={{width:50}}>
+            <Fab color="primary" aria-label="add" >
+                {add? <SaveAltIcon onClick={saveItem}/> : <AddIcon onClick={addItem}/>}
+            </Fab>
+        </TableCell>
       </TableRow>
+      {add&&
+        <TableRow>
+          <TableCell></TableCell>
+          <TableCell>name: <input type="text" onChange={(e) => {setAddname(e.target.value)}}/></TableCell>
+          <TableCell>descriprtion: <input type="text" onChange={(e) => {setAdddes(e.target.value)}}/></TableCell>
+          <TableCell></TableCell>
+          <TableCell>price: <input type="text" onChange={(e) => {setAddprice(e.target.value)}}/></TableCell>
+        </TableRow>
+      }
+      
       <TableRow >
         {columns.map((column) => (
           
@@ -130,8 +168,10 @@ const TableHead = ({onAscend,onDescend}) => {
             </div>
             </TableCell>
             
+            
           
         ))}
+        
       </TableRow>
     </thead>
   )
