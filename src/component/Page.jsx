@@ -91,7 +91,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch}) {
+export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch}) {
   const rows = products
   const [edit, setEdit] = useState(false)
   const [page, setPage] = useState(0)
@@ -153,8 +153,8 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     <TableContainer component={Paper}>
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
-        <TableHead onAscend={onAscend} onDescend={onDescend}
-                  products={products}/>     
+        <TableHead onAscend={onAscend} onDescend={onDescend} addSearch={addSearch}
+                  products={products} />     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

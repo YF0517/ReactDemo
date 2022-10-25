@@ -12,7 +12,7 @@ import axios from 'axios';
 
 
 
-const TableHead = ({onAscend,onDescend,products}) => {
+const TableHead = ({onAscend,onDescend,products,addSearch}) => {
   
   const [columns,setColumns]= useState([
     { 
@@ -64,7 +64,7 @@ const TableHead = ({onAscend,onDescend,products}) => {
         title : addname,
         description : adddes,
         price : addprice,
-
+        category_id : 55
           
      }
  const [add, setAdd] = useState(false)
@@ -74,6 +74,9 @@ const TableHead = ({onAscend,onDescend,products}) => {
  } 
 
  const saveItem = () => {
+  let list 
+  axios.post(`https://app.spiritx.co.nz/api/products`, bodyParameters, {headers:  {'token': token} } )
+    .then((res) => {list = res.data; addSearch(list)}).catch((err)=>{console.log(err)})
   setAdd(false)
  }
   

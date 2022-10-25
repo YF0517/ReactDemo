@@ -53,6 +53,11 @@ function App() {
     
   } 
 
+  //add row
+  const addSearch = (item) => {
+    setSearch([...search, item])
+  }
+
 
 
   //filter
@@ -95,7 +100,7 @@ function App() {
             <Route path='/page' element ={
             <>
               <Head filterItems={filterItems}/>
-              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch}/>
+              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch}/>
               {/* <AddProd /> */}
             </>
             } />
