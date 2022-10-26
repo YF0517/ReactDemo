@@ -31,6 +31,8 @@ function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
+ 
+
   const handleFirstPageButtonClick = (event) => {
     onPageChange(event, 0);
   };
@@ -126,8 +128,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-
+  
+  //fix warning of pangination
+  useEffect(() => { if( rows.length === rowsPerPage && page > 0 ) { setPage(0); } }, [rows.length, rowsPerPage, page]);
 
   //edit and save
   const editRow = (id,e) => {
@@ -207,7 +210,7 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                   component="div"
                   count={rows.length}
                   rowsPerPage={rowsPerPage}
-                  page={page}
+                  page={( page > 0 && rows.length === rowsPerPage ) ? 0 : page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   
