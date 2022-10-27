@@ -20,6 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 
 
@@ -100,6 +101,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [rowId, setRowId] = useState([])
+  const [disableFab, setDisableFab] = useState(false)
+  
+  
 
   const[name, setName] = useState([])
   const[descrip, setDescrip] = useState([])
@@ -134,7 +138,7 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   //edit and save
   const editRow = (id,e) => {
-    
+    setDisableFab(true)
     setEdit(true)
     setRowId(id)
   }
@@ -142,8 +146,14 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     
     let list
     axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
-    .then((res) => { list = res.data; updateSearch(list,rowId); console.log(list)} ).catch((err)=>{console.log(err)})
+    .then((res) => { list = res.data; updateSearch(list,rowId)} ).catch((err)=>{console.log(err)})
     setEdit(false)
+    setDisableFab(false)
+  }
+
+  const cancelEditRow = () => {
+    setEdit(false)
+    setDisableFab(false)
   }
 
   //delete
@@ -187,12 +197,25 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                 { edit && rowId === row.id ? <input type="text" onChange={(e) => {setPrice(e.target.value)}}/> : row.price}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                <Fab  aria-label="edit">
-                  {edit && rowId === row.id ? <AddIcon onClick={saveRow} /> : <EditIcon onClick={() => {editRow(row.id)}}/>}
-                </Fab>
-                <Fab  aria-label="edit" style={{marginLeft:15}}>
-                  <DeleteForeverIcon onClick={() => deletRow(row.id)}/>
-                </Fab>
+                
+                  {edit && rowId === row.id ? 
+                    <Fab  aria-label="edit"  onClick={saveRow}>
+                      <AddIcon /> 
+                    </Fab>: 
+                    <Fab  aria-label="edit" disabled={disableFab} onClick={() => {editRow(row.id)}}>
+                      <EditIcon />
+                    </Fab>
+                    }
+
+                  {edit && rowId === row.id ?
+                      <Fab color='edit'  style={{marginLeft:15}} onClick={cancelEditRow}>
+                        <CancelIcon />
+                      </Fab>:
+
+                      <Fab  aria-label="edit" style={{marginLeft:15}} disabled={disableFab} onClick={() => deletRow(row.id)}>
+                        <DeleteForeverIcon />
+                      </Fab>
+                    }
               </TableCell>
             </TableRow>
           ))}
