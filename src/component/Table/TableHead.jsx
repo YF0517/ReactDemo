@@ -7,12 +7,14 @@ import {useState} from 'react';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import CancelIcon from '@mui/icons-material/Cancel';
+import * as XLSX from 'xlsx'
 import axios from 'axios';
 
 
 
 
-const TableHead = ({onAscend,onDescend,products,addSearch}) => {
+const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab}) => {
   
   const [columns,setColumns]= useState([
     { 
@@ -49,6 +51,13 @@ const TableHead = ({onAscend,onDescend,products,addSearch}) => {
       minWidth: 170,
       align: 'center',
       format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+      id: 'action',
+      label: 'action',
+      minWidth: 170,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
     }
   ])
 
@@ -67,10 +76,13 @@ const TableHead = ({onAscend,onDescend,products,addSearch}) => {
         category_id : 55
           
      }
+
+//add function
  const [add, setAdd] = useState(false)
 
  const addItem = () => {
   setAdd(true)
+  setDisableFab(true)
  } 
 
  const saveItem = () => {
@@ -78,9 +90,23 @@ const TableHead = ({onAscend,onDescend,products,addSearch}) => {
   axios.post(`https://app.spiritx.co.nz/api/products`, bodyParameters, {headers:  {'token': token} } )
     .then((res) => {list = res.data; addSearch(list)}).catch((err)=>{console.log(err)})
   setAdd(false)
+  setDisableFab(false)
  }
-  
 
+ const cancelAdd = () => {
+  setAdd(false)
+  setDisableFab(false)
+}
+ 
+ //export excel
+  const exportList = () => {
+    const workBook = XLSX.utils.book_new()
+    const workSheet = XLSX.utils.json_to_sheet(products)
+
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1')
+    XLSX.writeFile(workBook, 'MyExcel.xlsx')
+  }
+ 
   //filtercontrol
   //id
   const [id, setId] = useState(false)
@@ -122,17 +148,16 @@ const TableHead = ({onAscend,onDescend,products,addSearch}) => {
             <Fab color="primary" aria-label="add" >
                 {add? <SaveAltIcon onClick={saveItem}/> : <AddIcon onClick={addItem}/>}
             </Fab>
+            {add? 
+              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={cancelAdd}><CancelIcon/> </Fab>
+              :  
+              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={exportList}> < SaveAltIcon/> </Fab>
+            }
+            
         </TableCell>
+        <TableCell /><TableCell /><TableCell /><TableCell /><TableCell />
       </TableRow>
-      {add&&
-        <TableRow>
-          <TableCell></TableCell>
-          <TableCell>name: <input type="text" onChange={(e) => {setAddname(e.target.value)}}/></TableCell>
-          <TableCell>descriprtion: <input type="text" onChange={(e) => {setAdddes(e.target.value)}}/></TableCell>
-          <TableCell></TableCell>
-          <TableCell>price: <input type="text" onChange={(e) => {setAddprice(e.target.value)}}/></TableCell>
-        </TableRow>
-      }
+      
       
       <TableRow >
         {columns.map((column) => (
@@ -174,8 +199,17 @@ const TableHead = ({onAscend,onDescend,products,addSearch}) => {
             
           
         ))}
-        
       </TableRow>
+      {add&&
+        <TableRow>
+          <TableCell></TableCell>
+          <TableCell align='center'><input type="text" onChange={(e) => {setAddname(e.target.value)}}/></TableCell>
+          <TableCell align='center'><input type="text" onChange={(e) => {setAdddes(e.target.value)}}/></TableCell>
+          <TableCell></TableCell>
+          <TableCell align='center'><input type="text" onChange={(e) => {setAddprice(e.target.value)}}/></TableCell>
+          <TableCell></TableCell>
+        </TableRow>
+      }
     </thead>
   )
 }
