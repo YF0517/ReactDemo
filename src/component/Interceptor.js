@@ -1,12 +1,5 @@
-import axios from 'axios';
-
-
 const BaseUrl = "https://app.spiritx.co.nz/api"
 const token = localStorage.getItem("token")
-
-// const config = {
-//   headers:  {'token': token}
-// }
 
 const onRequest = (config) => {
     
