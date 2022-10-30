@@ -21,8 +21,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
-import axios from 'axios';
-
+import { apiPut,apiDelet } from './Service';
 
 
 
@@ -145,8 +144,10 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   const saveRow = (e) => {
     
     let list
-    axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
-    .then((res) => { list = res.data; updateSearch(list,rowId)} ).catch((err)=>{console.log(err)})
+    
+    apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);console.log(res.data)} )
+    // axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
+    // .then((res) => { list = res.data; updateSearch(list,rowId)} ).catch((err)=>{console.log(err)})
     setEdit(false)
     setDisableFab(false)
   }
@@ -158,8 +159,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   //delete
   const deletRow = (id) => {
-    axios.delete(`https://app.spiritx.co.nz/api/product/${id}`, {headers: {'token': token} })
-    .then((res) => {console.log(res.data)}).catch((err) => {console.log(err)})
+    apiDelet(`product/${id}`).then((res) => {console.log(res)})
+    // axios.delete(`https://app.spiritx.co.nz/api/product/${id}`, {headers: {'token': token} })
+    // .then((res) => {console.log(res.data)}).catch((err) => {console.log(err)})
     deletSearch(id)
   }
   

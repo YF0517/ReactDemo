@@ -5,6 +5,8 @@ import Page from './component/Page';
 import Head from './component/Head';
 import Login from './component/Login';
 import {Route,Routes} from 'react-router-dom';
+import './component/Service'
+import { apiGet } from './component/Service';
 
 
 
@@ -14,10 +16,9 @@ const baseURL = "https://app.spiritx.co.nz"
 function App() {
   const [products, setProducts] = useState([])
   useEffect(() =>{
-    axios.get(`${baseURL}/api/products`).then((response) => {
-    setProducts(response.data)
-    
-    })
+    apiGet('products').then((response) => {
+      setProducts(response.data)
+       })
   },[])
 
 
@@ -25,9 +26,9 @@ function App() {
   const[search,setSearch] = useState([])
   
   useEffect(() =>{
-    axios.get(`${baseURL}/api/products`).then((response) => {
+    apiGet('products').then((response) => {
     setSearch(response.data)
-    })
+     })
   },[])
 
   const filterItems = (searchItem) => {
