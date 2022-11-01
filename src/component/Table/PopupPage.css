@@ -1,0 +1,10 @@
+.insidediv{
+  height: 15%;
+  width: 20%;
+  background-color: aliceblue;
+  border: 3px solid black;
+  margin: auto;
+  position: absolute;
+  top:20%;
+  left: 40%;
+}

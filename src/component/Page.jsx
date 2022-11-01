@@ -1,4 +1,4 @@
-import { useEffect, useState,forwardRef } from 'react';
+import { useEffect, useState ,useRef} from 'react';
 import TableHead from './Table/TableHead'
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
@@ -21,10 +21,9 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { apiPut,apiDelet } from './Service';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-
+import { apiPut} from './Service';
+import SpamBar from './Table/SpamBar';
+import PopupPage from './Table/PopupPage';
 
 
 
@@ -112,7 +111,12 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   const[name, setName] = useState([])
   const[descrip, setDescrip] = useState([])
   const[price, setPrice] = useState([])
+  const[dename, setDename] = useState([])
+  const[dedescrip, setDedescrip] = useState([])
+  const[deprice, setDeprice] = useState([])
   const [open, setOpen] = useState(false)
+  const [pop, setPop] = useState(false)
+  
   
   const bodyParameters = {
     title: name,
@@ -138,17 +142,54 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   
   //fix warning of pangination
-  useEffect(() => { if( rows.length === rowsPerPage && page > 0 ) { setPage(0); } }, [rows.length, rowsPerPage, page]);
+  useEffect(() => { if( (rows.length === rowsPerPage) && (page > 0) ) { setPage(0); } }, [rows.length, rowsPerPage, page]);
+  
 
   //edit and save
-  const editRow = (id,e) => {
+  const editRow = (id) => {
     setDisableFab(true)
     setEdit(true)
     setRowId(id)
+    let rowName = rows.filter((item)=>item.id === id)
+    let rowDeName = rows.filter((item)=>item.id === id)
+    //console.log(rowName[0].title)
+    setName(rowName[0].title)
+    setDescrip(rowName[0].description)
+    setPrice(rowName[0].price)
+    setDename(rowDeName[0].title)
+    setDedescrip(rowDeName[0].description)
+    setDeprice(rowDeName[0].price)
   }
+
+  const preName = useRef(name)
+  const preDescrip = useRef(descrip)
+  const prePrice = useRef(price)
+  useEffect(() => {
+    //assign the ref's current value to the count Hook
+    preName.current = name
+    preDescrip.current = descrip
+    prePrice.current = price
+  }, [name,descrip,price]);
+
+  const preDeName = useRef(dename)
+  const preDeDescrip = useRef(dedescrip)
+  const preDePrice = useRef(prePrice)
+  useEffect(() => {
+    //assign the ref's current value to the count Hook
+    preDeName.current = dename
+    preDeDescrip.current = dedescrip
+    preDePrice.current = deprice
+  }, [dename,dedescrip,deprice]);
+
+
   const saveRow = (e) => {
     let list
-    apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);setOpen(true)})
+    // console.log(preName.current)
+    // console.log(name)
+    if((preName.current !== dename)||(preDescrip.current !== dedescrip)||(prePrice.current !== deprice)){
+      apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);setOpen(true)})
+    }
+    
     setEdit(false)
     setDisableFab(false)
   }
@@ -159,30 +200,23 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
 
   //delete
+  
   const deletRow = (id) => {
-    apiDelet(`product/${id}`).then((res) => {console.log(res);setOpen(true)})
-    deletSearch(id)
+    setPop(true)
+    setRowId(id)
+    // conf&&apiDelet(`product/${id}`).then((res) => {console.log(res);setOpen(true)})
+    // conf&&deletSearch(id)
+    // setConf(false)
   }
   
-
-  //snackbar
-  const Alert = forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
-  
-
-  const handleClose = () => {
-      setOpen(false)
-  }
 
   return (
     <div className='page'>
-    <Snackbar open={open} autoHideDuration={1500} onClose={handleClose} >
-        <Alert severity="success" sx={{ width: '100%' }}>
-          This is a success!
-        </Alert>
-    </Snackbar>
-    
+
+    <SpamBar setOpen={setOpen} open={open}/>
+
+    {pop? <PopupPage  setPop={setPop} rowId={rowId} setOpen={setOpen} deletSearch={deletSearch}/> : null}
+
     <TableContainer component={Paper}>
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
@@ -198,16 +232,16 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                 {row.id}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setName(e.target.value)}} /> : row.title}
+                { edit && rowId === row.id ? <input type="text" defaultValue={row.title} onChange={(e) => {setName(e.target.value)}} /> : row.title}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setDescrip(e.target.value)}}/> : row.description}
+                { edit && rowId === row.id ? <input type="text" defaultValue={row.description} onChange={(e) => {setDescrip(e.target.value)}}/> : row.description}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 <img style={{ width: 100 }} src={(row.product_image&&`https://app.spiritx.co.nz/storage/${row.product_image}`)} alt={row.product_image}/>
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                { edit && rowId === row.id ? <input type="text" onChange={(e) => {setPrice(e.target.value)}}/> : row.price}
+                { edit && rowId === row.id ? <input type="text" defaultValue={row.price}  onChange={(e) => {setPrice(e.target.value)}}/> : row.price}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 
@@ -225,7 +259,7 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                         <CancelIcon />
                       </Fab>:
 
-                      <Fab  aria-label="edit" style={{marginLeft:15}} disabled={disableFab} onClick={() => deletRow(row.id)}>
+                      <Fab  aria-label="edit" style={{marginLeft:15}} disabled={disableFab} onClick={() => {deletRow(row.id)}}>
                         <DeleteForeverIcon />
                       </Fab>
                     }
@@ -239,6 +273,7 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
             </TableRow>
           )}
         </TableBody>
+        
       </Table>
       
       <TablePagination
@@ -246,7 +281,8 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                   component="div"
                   count={rows.length}
                   rowsPerPage={rowsPerPage}
-                  page={( page > 0 && rows.length === rowsPerPage ) ? 0 : page}
+                  page={( (page > 0) && (rows.length === rowsPerPage) ) ? page-1 : page}
+                  //page={rows.length <= 0 ? 0 : page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   

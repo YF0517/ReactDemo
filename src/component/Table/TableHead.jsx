@@ -69,7 +69,6 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen}
  const [addprice, setAddprice] = useState([])
  
  
- const token = localStorage.getItem("token")
  const bodyParameters = {
         title : addname,
         description : adddes,
