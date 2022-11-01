@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,forwardRef } from 'react';
 import TableHead from './Table/TableHead'
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
@@ -22,6 +22,10 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { apiPut,apiDelet } from './Service';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+
 
 
 
@@ -95,6 +99,7 @@ TablePaginationActions.propTypes = {
 
 
 export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch}) {
+
   const rows = products
   const [edit, setEdit] = useState(false)
   const [page, setPage] = useState(0)
@@ -107,8 +112,8 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   const[name, setName] = useState([])
   const[descrip, setDescrip] = useState([])
   const[price, setPrice] = useState([])
-
-  const token = localStorage.getItem("token")
+  const [open, setOpen] = useState(false)
+  
   const bodyParameters = {
     title: name,
     description: descrip,
@@ -125,12 +130,12 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-
+  }
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }
+
   
   //fix warning of pangination
   useEffect(() => { if( rows.length === rowsPerPage && page > 0 ) { setPage(0); } }, [rows.length, rowsPerPage, page]);
@@ -142,41 +147,47 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     setRowId(id)
   }
   const saveRow = (e) => {
-    
     let list
-    
-    apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);console.log(res.data)} )
-    // axios.put(`https://app.spiritx.co.nz/api/product/${rowId}`, bodyParameters, {headers:  {'token': token} } )
-    // .then((res) => { list = res.data; updateSearch(list,rowId)} ).catch((err)=>{console.log(err)})
+    apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);setOpen(true)})
     setEdit(false)
     setDisableFab(false)
   }
-
   const cancelEditRow = () => {
     setEdit(false)
     setDisableFab(false)
   }
 
+
   //delete
   const deletRow = (id) => {
-    apiDelet(`product/${id}`).then((res) => {console.log(res)})
-    // axios.delete(`https://app.spiritx.co.nz/api/product/${id}`, {headers: {'token': token} })
-    // .then((res) => {console.log(res.data)}).catch((err) => {console.log(err)})
+    apiDelet(`product/${id}`).then((res) => {console.log(res);setOpen(true)})
     deletSearch(id)
   }
   
+
+  //snackbar
+  const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
   
+
+  const handleClose = () => {
+      setOpen(false)
+  }
 
   return (
     <div className='page'>
+    <Snackbar open={open} autoHideDuration={1500} onClose={handleClose} >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          This is a success!
+        </Alert>
+    </Snackbar>
     
-
-    {/* <button onClick={() => {onAscend("id")}}></button> */}
     <TableContainer component={Paper}>
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
         <TableHead onAscend={onAscend} onDescend={onDescend} addSearch={addSearch}
-                  products={products} setDisableFab={setDisableFab} />     
+                  products={products} setDisableFab={setDisableFab} setOpen={setOpen}/>     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

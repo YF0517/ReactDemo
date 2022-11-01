@@ -9,14 +9,13 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import CancelIcon from '@mui/icons-material/Cancel';
 import * as XLSX from 'xlsx'
-import axios from 'axios';
 import { apiPost } from '../Service';
 
 
 
 
 
-const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab}) => {
+const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen}) => {
   
   const [columns,setColumns]= useState([
     { 
@@ -89,9 +88,8 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab}) => {
 
  const saveItem = () => {
   let list 
-  apiPost(`products`,bodyParameters).then((res) => {list = res.data; addSearch(list)})
-  // axios.post(`https://app.spiritx.co.nz/api/products`, bodyParameters, {headers:  {'token': token} } )
-  //   .then((res) => {list = res.data; addSearch(list)}).catch((err)=>{console.log(err)})
+  apiPost(`products`,bodyParameters).then((res) => {list = res.data; addSearch(list);setOpen(true)})
+  
   setAdd(false)
   setDisableFab(false)
  }

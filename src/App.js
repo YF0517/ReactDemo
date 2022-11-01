@@ -1,5 +1,4 @@
 import { useEffect,useState} from 'react';
-import axios from "axios";
 import './App.css';
 import Page from './component/Page';
 import Head from './component/Head';
@@ -117,12 +116,6 @@ function App() {
           
         </Routes>
           
-      
-      {/* <Head filterItems={filterItems}/> */}
-
-      
-                               
-      {/* <button onClick={() =>{Ascending("id")}}></button>  */}
       
     </div>
   );

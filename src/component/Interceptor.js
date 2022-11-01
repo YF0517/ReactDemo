@@ -1,6 +1,7 @@
 const BaseUrl = "https://app.spiritx.co.nz/api"
 const token = localStorage.getItem("token")
 
+
 const onRequest = (config) => {
     
     config = {
@@ -24,13 +25,17 @@ const onRequestError = (error) => {
   console.log(error)
  }
 
+
+
 const onResponse = (response) => {
   
   return response
 }
 
 const onResponseError = (error) => {
+ const open = false
  console.log(error)
+ return open
 }
 
 export const setupAxiosInstance = (axiosToInstance) => {
@@ -38,3 +43,4 @@ export const setupAxiosInstance = (axiosToInstance) => {
     axiosToInstance.interceptors.response.use(onResponse,onResponseError)
   return axiosToInstance
 }
+
