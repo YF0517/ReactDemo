@@ -24,7 +24,7 @@ export default function SearchAppBar({filterItems}) {
           >
             <MenuIcon />
           </IconButton>
-          <SearchBar filterItems={filterItems}/>
+          <SearchBar filterItems={filterItems} />
         </Toolbar>
       </AppBar>
     </Box>

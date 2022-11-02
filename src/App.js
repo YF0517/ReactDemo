@@ -40,8 +40,17 @@ function App() {
         }
       )
       setSearch(list)
-      console.log(list)
+      if(list.length === products.length){
+        setTestPage(false)
+      }
+      else{
+        setTestPage(true)
+      }
+      
+      // console.log("Test Set Page", testSetPage)
   }
+
+  
   
   //change row
   const updateSearch = (items,id) => {
@@ -98,6 +107,10 @@ function App() {
     }
   }
 
+  //----------------- Test for PageSet --------------//
+   const [testSetPage, setTestPage] = useState(false)
+
+  
   return (
     <div className="App">
       
@@ -106,8 +119,8 @@ function App() {
 
             <Route path='/page' element ={
             <>
-              <Head filterItems={filterItems}/>
-              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch}/>
+              <Head filterItems={filterItems} />
+              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch} testSetPage={testSetPage}/>
               {/* <AddProd /> */}
             </>
             } />

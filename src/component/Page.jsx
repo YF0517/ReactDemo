@@ -26,10 +26,6 @@ import SpamBar from './Table/SpamBar';
 import PopupPage from './Table/PopupPage';
 
 
-
-
-
-
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -97,7 +93,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch}) {
+export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch, testSetPage}) {
 
   const rows = products
   const [edit, setEdit] = useState(false)
@@ -142,7 +138,15 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
   
   //fix warning of pangination
-  useEffect(() => { if( (rows.length === rowsPerPage) && (page > 0) ) { setPage(0); } }, [rows.length, rowsPerPage, page]);
+  useEffect(() => { 
+    if( (rows.length % rowsPerPage === 0) && (page > 0) ) {
+       setPage(parseInt(page)-1); 
+      }
+    if(testSetPage){
+      setPage(0)
+    }
+      //console.log(testSetPage)
+}, [rows.length,rowsPerPage,page,testSetPage]);
   
 
   //edit and save
@@ -208,6 +212,9 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     // conf&&deletSearch(id)
     // setConf(false)
   }
+
+  //---------------------- Test SetPage from Header ----------------------//
+ 
   
 
   return (
@@ -281,8 +288,15 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                   component="div"
                   count={rows.length}
                   rowsPerPage={rowsPerPage}
-                  page={( (page > 0) && (rows.length === rowsPerPage) ) ? page-1 : page}
+                  // page={( (page > 0) && (rowsPerPage == 0) ) ? (parseInt(page)-1) : page}
+                  // page={((page > 0) && (rows.length === rowsPerPage)) ? page-1 : page}
+                  page = {testSetPage? 0 : ((rows.length % rowsPerPage === 0) && (page > 0)? page-1 : page)}
+                  // if( (rows.length % 5 == 0) && (page > 0) ) {
+                  //   setPage(parseInt(page)-1); 
+                  //   console.log("Logic Works")
+                  //  } 
                   //page={rows.length <= 0 ? 0 : page}
+                  //page={page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   
