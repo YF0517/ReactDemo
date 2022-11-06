@@ -21,11 +21,28 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { apiPut} from './Service';
+import { apiPut,apiDelet} from './Service';
 import SpamBar from './Table/SpamBar';
 import PopupPage from './Table/PopupPage';
 
+import {numOfSearches} from "./Head/SearchBar"
 
+//-----------------------------------------------spambar-------------------------------------------------//
+export const snackBarParam = {
+  errorFeedback : false,
+  actionState: "",
+  severityState: "success"
+}
+
+
+export const setErrorFeedback = (errorFeedback, actionState, severityState) => {
+  snackBarParam.errorFeedback = errorFeedback
+  snackBarParam.actionState = actionState
+  snackBarParam.severityState = severityState
+  console.log(severityState)
+}
+
+//-----------------------------------------------pagination-------------------------------------------------//
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -93,7 +110,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch, testSetPage}) {
+export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,testSetPage,setProducts}) {
 
   const rows = products
   const [edit, setEdit] = useState(false)
@@ -112,6 +129,8 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   const[deprice, setDeprice] = useState([])
   const [open, setOpen] = useState(false)
   const [pop, setPop] = useState(false)
+
+  let formData = new FormData()
   
   
   const bodyParameters = {
@@ -121,7 +140,10 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
        }
   
-  
+  useEffect(() => { 
+      console.log(numOfSearches)
+      setPage(0)
+    }, [numOfSearches]);
 
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -137,19 +159,10 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   }
 
   
-  //fix warning of pangination
-  useEffect(() => { 
-    if( (rows.length % rowsPerPage === 0) && (page > 0) ) {
-       setPage(parseInt(page)-1); 
-      }
-    if(testSetPage){
-      setPage(0)
-    }
-      //console.log(testSetPage)
-}, [rows.length,rowsPerPage,page,testSetPage]);
   
+   
 
-  //edit and save
+  //-----------------------------------------------edit and save-------------------------------------------------//
   const editRow = (id) => {
     setDisableFab(true)
     setEdit(true)
@@ -191,7 +204,15 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
     // console.log(preName.current)
     // console.log(name)
     if((preName.current !== dename)||(preDescrip.current !== dedescrip)||(prePrice.current !== deprice)){
-      apiPut(`product/${rowId}`,bodyParameters).then((res) => { list = res.data; updateSearch(list,rowId);setOpen(true)})
+      apiPut(`product/${rowId}`,bodyParameters).then((res) => { 
+        if(snackBarParam.errorFeedback === false){
+          list = res.data; updateSearch(list,rowId);snackBarParam.severityState = "success";snackBarParam.actionState = "edit successful";setOpen(true)
+        }
+        setOpen(true)
+        snackBarParam.errorFeedback = false
+        //snackBarParam.severityState = "success"
+
+      })
     }
     
     setEdit(false)
@@ -203,32 +224,55 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   }
 
 
-  //delete
+  //-----------------------------------------------delete-------------------------------------------------//
   
   const deletRow = (id) => {
+    setDisableFab(true)
     setPop(true)
     setRowId(id)
-    // conf&&apiDelet(`product/${id}`).then((res) => {console.log(res);setOpen(true)})
-    // conf&&deletSearch(id)
-    // setConf(false)
+  }
+
+  // const deletSearch = () => {
+  //   products.filter((item) => item.id !== RowId)
+
+  // }
+  const confDelete = () => {
+    
+    let list = products.filter((item) => item.id !== rowId)
+     if( (list.length % rowsPerPage === 0) && (page > 0) ) {
+       setPage(parseInt(page)-1); 
+      }
+
+    apiDelet(`product/${rowId}`).then((res) => {
+      if(snackBarParam.errorFeedback === false){
+        console.log(res);
+        
+        snackBarParam.actionState = "delete successful";
+        setOpen(true)
+      }
+      setOpen(true)
+    })
+    deletSearch(rowId)
+    setDisableFab(false)
+    setPop(false)
   }
 
   //---------------------- Test SetPage from Header ----------------------//
- 
+  
   
 
   return (
     <div className='page'>
 
-    <SpamBar setOpen={setOpen} open={open}/>
+    <SpamBar setOpen={setOpen} open={open} snackBarParam={snackBarParam}/>
 
-    {pop? <PopupPage  setPop={setPop} rowId={rowId} setOpen={setOpen} deletSearch={deletSearch}/> : null}
+    {pop? <PopupPage  setPop={setPop} confDelete={confDelete} setDisableFab={setDisableFab}/> : null}
 
     <TableContainer component={Paper}>
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
         <TableHead onAscend={onAscend} onDescend={onDescend} addSearch={addSearch}
-                  products={products} setDisableFab={setDisableFab} setOpen={setOpen}/>     
+                  products={products} setDisableFab={setDisableFab} setOpen={setOpen} setSearch={setSearch} setProducts={setProducts} disableFab={disableFab} />     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -289,14 +333,15 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
                   count={rows.length}
                   rowsPerPage={rowsPerPage}
                   // page={( (page > 0) && (rowsPerPage == 0) ) ? (parseInt(page)-1) : page}
-                  // page={((page > 0) && (rows.length === rowsPerPage)) ? page-1 : page}
-                  page = {testSetPage? 0 : ((rows.length % rowsPerPage === 0) && (page > 0)? page-1 : page)}
+                   //page={((page > 0) && (rows.length === rowsPerPage)) ? page-1 : page}
+                  //page = {testSetPage? 0 : ((rows.length % rowsPerPage === 0) && (page > 0)? page-1 : page)}
                   // if( (rows.length % 5 == 0) && (page > 0) ) {
                   //   setPage(parseInt(page)-1); 
                   //   console.log("Logic Works")
                   //  } 
                   //page={rows.length <= 0 ? 0 : page}
-                  //page={page}
+                  page={page}
+                  //page = {(rows.length % rowsPerPage === 0) && (page > 0)? page-1 : page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   

@@ -2,6 +2,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 
+export let numOfSearches = 0;
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -49,6 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const SearchBar = ({filterItems}) => {
   
   const handleChange = (e) =>{
+    numOfSearches += 1
     filterItems(e.target.value)
   }
 

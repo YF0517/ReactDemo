@@ -1,17 +1,17 @@
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import {apiDelet } from '../Service';
 
 import './PopupPage.css'
-const PopupPage = ({setPop,rowId,setOpen,deletSearch}) => {
-  const confDelete = () => {
+const PopupPage = ({setPop,confDelete,setDisableFab}) => {
+  // const confDelete = () => {
     
-    apiDelet(`product/${rowId}`).then((res) => {console.log(res);setOpen(true)})
-    deletSearch(rowId)
-    setPop(false)
-  }
+  //   apiDelet(`product/${rowId}`).then((res) => {console.log(res);setOpen(true)})
+  //   deletSearch(rowId)
+  //   setPop(false)
+  // }
   
   const deDelete = () => {
+    setDisableFab(false)
     setPop(false)
   }
 

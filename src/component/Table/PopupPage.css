@@ -5,6 +5,7 @@
   border: 3px solid black;
   margin: auto;
   position: absolute;
-  top:20%;
+  top:30%;
   left: 40%;
+  opacity: 100;
 }

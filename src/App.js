@@ -1,4 +1,4 @@
-import { useEffect,useState} from 'react';
+import { useEffect,useState,useRef} from 'react';
 import './App.css';
 import Page from './component/Page';
 import Head from './component/Head';
@@ -6,8 +6,6 @@ import Login from './component/Login';
 import {Route,Routes} from 'react-router-dom';
 import './component/Service'
 import { apiGet } from './component/Service';
-
-
 
 const baseURL = "https://app.spiritx.co.nz"
 
@@ -31,7 +29,9 @@ function App() {
   },[])
   
 
-
+  //----------------- Test for PageSet --------------//
+  const [testSetPage, setTestPage] = useState()  
+  
   const filterItems = (searchItem) => {
     let list = []
         list = products.filter(
@@ -40,14 +40,7 @@ function App() {
         }
       )
       setSearch(list)
-      if(list.length === products.length){
-        setTestPage(false)
-      }
-      else{
-        setTestPage(true)
-      }
-      
-      // console.log("Test Set Page", testSetPage)
+    
   }
 
   
@@ -67,11 +60,13 @@ function App() {
   //add row
   const addSearch = (item) => {
     setSearch([...search, item])
+    setProducts([...products,item])
   }
 
   //delete row
   const deletSearch = (id) => {
     setSearch(search.filter((item) => item.id !== id))
+    setProducts(products.filter((item) => item.id !== id))
   }
 
 
@@ -107,8 +102,7 @@ function App() {
     }
   }
 
-  //----------------- Test for PageSet --------------//
-   const [testSetPage, setTestPage] = useState(false)
+  
 
   
   return (
@@ -120,7 +114,7 @@ function App() {
             <Route path='/page' element ={
             <>
               <Head filterItems={filterItems} />
-              <Page products={search} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch} testSetPage={testSetPage}/>
+              <Page products={search} setSearch={setSearch} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch} testSetPage={testSetPage} setProducts={setProducts}/>
               {/* <AddProd /> */}
             </>
             } />

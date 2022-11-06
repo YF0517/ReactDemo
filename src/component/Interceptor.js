@@ -1,9 +1,12 @@
+import {setErrorFeedback} from './Page'
+
 const BaseUrl = "https://app.spiritx.co.nz/api"
-const token = localStorage.getItem("token")
+
+
 
 
 const onRequest = (config) => {
-    
+  const token = localStorage.getItem("token")
     config = {
       ...config, BaseUrl
     }
@@ -23,6 +26,7 @@ const onRequest = (config) => {
 
 const onRequestError = (error) => {
   console.log(error)
+  console.log("hii")
  }
 
 
@@ -33,9 +37,14 @@ const onResponse = (response) => {
 }
 
 const onResponseError = (error) => {
- const open = false
- console.log(error)
- return open
+  // if(error.response.status === 401){
+  //   alert("login wrong")
+  // }
+  
+  setErrorFeedback(true, error.message, "error")
+ 
+ 
+ return error
 }
 
 export const setupAxiosInstance = (axiosToInstance) => {
