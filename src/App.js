@@ -1,4 +1,4 @@
-import { useEffect,useState,useRef} from 'react';
+import { useEffect,useState} from 'react';
 import './App.css';
 import Page from './component/Page';
 import Head from './component/Head';
@@ -29,20 +29,12 @@ function App() {
   },[])
   
 
-  //----------------- Test for PageSet --------------//
-  const [testSetPage, setTestPage] = useState()  
+  //----------------- Test for PageSet --------------// 
 
   const [searchItem, setSearchItem] = useState("")
   
   const filterItems = (searchItem) => {
     setSearchItem(searchItem)
-    // let list = []
-    // list = products.filter(
-    //   (item) => {
-    //     return item.title.toLowerCase().includes(searchItem.toLowerCase())||(item.description&&item.description.toLowerCase().includes(searchItem.toLowerCase()))
-    //   }
-    // )
-    // setSearch(list)
   }
 
   
@@ -72,40 +64,6 @@ function App() {
   }
 
 
-
-  //filter
-  const Ascending = (item) => {
-    if(item === "id"){
-      const list = [...search].sort((a, b) => a.id - b.id);
-      setSearch(list)
-    }
-    if(item === "price"){
-      const list = [...search].sort((a, b) => a.price - b.price);
-      setSearch(list)
-    }
-    if(item === "name"){
-      const list = [...search].sort((a, b) => a.title.localeCompare(b.title));
-      setSearch(list)
-    }
-  }
-  const Descending = (item) => {
-    if(item === "id"){
-      const list = [...search].sort((a, b) => b.id - a.id);
-      setSearch(list)
-    }
-    if(item === "price"){
-      const list = [...search].sort((a, b) => b.price - a.price);
-      
-      setSearch(list)
-    }
-    if(item === "name"){
-      const list = [...search].sort((a, b) => b.title.localeCompare(a.title));
-      setSearch(list)
-    }
-  }
-
-  
-
   
   return (
     <div className="App">
@@ -119,12 +77,9 @@ function App() {
               <Page search={products} 
                     products={search} 
                     setSearch={setSearch} 
-                    onAscend={Ascending} 
-                    onDescend={Descending} 
                     updateSearch={updateSearch} 
                     addSearch={addSearch} 
                     deletSearch={deletSearch} 
-                    testSetPage={testSetPage} 
                     setProducts={setProducts}
                     searchItem={searchItem}
                     />

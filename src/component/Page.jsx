@@ -25,7 +25,6 @@ import { apiPut,apiDelet} from './Service';
 import SpamBar from './Table/SpamBar';
 import PopupPage from './Table/PopupPage';
 
-import {numOfSearches} from "./Head/SearchBar"
 
 //-----------------------------------------------spambar-------------------------------------------------//
 export const snackBarParam = {
@@ -110,7 +109,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({search, products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,testSetPage,setProducts, searchItem}) {
+export default function CustomPaginationActionsTable({search, products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,setProducts, searchItem}) {
 
   const rows = products
   const [edit, setEdit] = useState(false)
@@ -206,7 +205,6 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
         setOpen(true)
         snackBarParam.errorFeedback = false
         //snackBarParam.severityState = "success"
-
       })
     }
     
@@ -227,10 +225,6 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
     setRowId(id)
   }
 
-  // const deletSearch = () => {
-  //   products.filter((item) => item.id !== RowId)
-
-  // }
   const confDelete = () => {
     
     let list = products.filter((item) => item.id !== rowId)
@@ -277,7 +271,7 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
     <TableContainer component={Paper}>
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
-        <TableHead onAscend={onAscend} onDescend={onDescend} addSearch={addSearch}
+        <TableHead addSearch={addSearch}
                   products={products} setDisableFab={setDisableFab} setOpen={setOpen} setSearch={setSearch} setProducts={setProducts} disableFab={disableFab} />     
         <TableBody>
           {(rowsPerPage > 0

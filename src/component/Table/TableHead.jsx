@@ -15,12 +15,13 @@ import { apiPost } from '../Service';
 import {snackBarParam} from'../Page'
 ;
 import { Box } from '@mui/system';
+import { useEffect } from 'react';
 
 
 
 
 
-const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,setSearch,disableFab}) => {
+const TableHead = ({products,addSearch,setDisableFab,setOpen,setSearch,disableFab}) => {
   
   const [columns,setColumns]= useState([
     { 
@@ -68,7 +69,7 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   ])
 
 
- //add product
+ //------------------------------------------------------------------------------------------add product--------------------------------//
  const [addname, setAddname] = useState([])
  const [adddes, setAdddes] = useState([])
  const [addprice, setAddprice] = useState([])
@@ -87,9 +88,26 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
  const [add, setAdd] = useState(false)
 
  const addItem = () => {
+  setAddname("")
+  setAdddes("")
+  setAddprice("")
   setAdd(true)
   setDisableFab(true)
  } 
+
+
+ const[disSave,setSave] = useState(true)
+
+ useEffect(() => {
+  
+  if(bodyParameters.title&&bodyParameters.description&&bodyParameters.price){
+    setSave(false)
+  }
+  else{
+    setSave(true)
+  }
+
+ },[bodyParameters.title,bodyParameters.description,bodyParameters.price])
 
  const saveItem = () => {
   let list 
@@ -106,7 +124,8 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
 
   apiPost(`products`,formData).then((res) => {
     if(snackBarParam.errorFeedback === false){
-      list = res.data; addSearch(list);snackBarParam.severityState = "success"; snackBarParam.actionState="add successful";setOpen(true)
+      list = res.data; addSearch(list);snackBarParam.severityState = "success"; snackBarParam.actionState="add successful";setOpen(true);
+      
     }
     
     setOpen(true)
@@ -126,7 +145,7 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   setSend([])
 }
  
- //export excel
+ //------------------------------------------------------------------------------export excel-------------------------------------------------------------//
   const exportList = () => {
     const workBook = XLSX.utils.book_new()
     const workSheet = XLSX.utils.json_to_sheet(products)
@@ -135,7 +154,7 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
     XLSX.writeFile(workBook, 'MyExcel.xlsx')
   }
 
-  //import excel
+  //-----------------------------------------------------------------------------import excel------------------------------------------------------------//
   const importFromExcel = (e) => {
     e.preventDefault()
     console.log(e)
@@ -154,12 +173,46 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
     }
   }
  
-  //filtercontrol
+ //-----------------------------------------------------------------------------filter--------------------------------------------------------------------//
+  const Ascending = (item) => {
+    if(item === "id"){
+      const list = [...products].sort((a, b) => a.id - b.id);
+      setSearch(list)
+    }
+    if(item === "price"){
+      const list = [...products].sort((a, b) => a.price - b.price);
+      setSearch(list)
+    }
+    if(item === "name"){
+      const list = [...products].sort((a, b) => a.title.localeCompare(b.title));
+      setSearch(list)
+    }
+  }
+  const Descending = (item) => {
+    if(item === "id"){
+      const list = [...products].sort((a, b) => b.id - a.id);
+      setSearch(list)
+    }
+    if(item === "price"){
+      const list = [...products].sort((a, b) => b.price - a.price);
+      
+      setSearch(list)
+    }
+    if(item === "name"){
+      const list = [...products].sort((a, b) => b.title.localeCompare(a.title));
+      setSearch(list)
+    }
+  }
+
+
+
+
+  //------------------------------------------------------------------filtercontrol-----------------------------------------------------------------------//
   //id
   const [id, setId] = useState(false)
   const [idActive, setidActive] = useState(false);
   const idHandleClick = () => {
-    id?  onAscend("id")  : onDescend("id")
+    id?  Ascending("id")  : Descending("id")
     priceActive&&setpriceActive(false)
     nameActive&&setnameActive(false)
     setId(!id)
@@ -170,7 +223,7 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   const [price, setPrice] = useState(false)
   const [priceActive, setpriceActive] = useState(false);
   const priceHandleClick = () => {
-    price?  onAscend("price")  :onDescend("price")
+    price?  Ascending("price")  :Descending("price")
     idActive&&setidActive(false)
     nameActive&&setnameActive(false)
     setPrice(!price)
@@ -181,7 +234,7 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   const [name, setName] = useState(false)
   const [nameActive, setnameActive] = useState(false);
   const nameHandleClick = () => {
-    name?  onAscend("name")  :onDescend("name")
+    name?  Ascending("name")  :Descending("name")
     idActive&&setidActive(false)
     priceActive&&setpriceActive(false)
     setName(!name)
@@ -205,13 +258,17 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
     
   }
 
+  
+
+
+
   return (
     <thead>
       <TableRow style={{position:"relative"}}>
         <TableCell style={{width:100}}>
             
                 {add?
-                 <Fab color="primary" aria-label="add" > <SaveAltIcon onClick={saveItem}/> </Fab> :
+                 <Fab color="primary" aria-label="add" disabled={disSave}> <SaveAltIcon  onClick={saveItem}/> </Fab> :
                  <Fab color="primary" aria-label="add" disabled={disableFab}><AddIcon onClick={addItem}/>  </Fab>
                  }
             
@@ -220,12 +277,12 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
               :  
             
               <Box sx={{ flexGrow: 1 }} style={{position:"absolute", top:15,width:"60%"}}>
-              <Fab color="primary" aria-label="add" style={{marginLeft:"15%"}} > 
+              <Fab color="primary" aria-label="add" style={{marginLeft:"15%"}} disabled={disableFab}> 
                 
                 < FileUploadIcon style={{position:"absolute"}}/>
                 <input  accept="" multiple type="file" onChange={importFromExcel} style={{opacity:0}}/>
               </Fab>
-              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={exportList}> < DownloadIcon/> </Fab>
+              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={exportList} disabled={disableFab}> < DownloadIcon/> </Fab>
               </Box>
               
             }
