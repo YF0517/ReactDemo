@@ -99,7 +99,10 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   formData.append("description",bodyParameters.description)
   formData.append("price",bodyParameters.price)
   formData.append("category_id", 1)
-  formData.append("product_image", sendPic)
+  if(sendPic.length !== 0){
+    formData.append("product_image", sendPic)
+  }
+  
 
   apiPost(`products`,formData).then((res) => {
     if(snackBarParam.errorFeedback === false){
@@ -108,7 +111,8 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
     
     setOpen(true)
     snackBarParam.errorFeedback = false
-    
+    setPic([])
+    setSend([])
   })
   
   setAdd(false)
@@ -118,6 +122,8 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
  const cancelAdd = () => {
   setAdd(false)
   setDisableFab(false)
+  setPic([])
+  setSend([])
 }
  
  //export excel
@@ -183,10 +189,14 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
   }
 
   //------------------------showPicture-------------------------//
-  const [picSrc,setPic] = useState("")
-  const [sendPic,setSend] = useState("")
+  const [picSrc,setPic] = useState([])
+  const [sendPic,setSend] = useState([])
+  
+
   const showPic = (e) => {
+    
     e.preventDefault()
+    //setPic(imgfile => [...imgfile, URL.URL.revokeObjectURL(e.target.files[0])])
     setPic([])
     if (e.target.files.length !== 0) {
       setPic(imgfile => [...imgfile, URL.createObjectURL(e.target.files[0])])
@@ -210,12 +220,12 @@ const TableHead = ({onAscend,onDescend,products,addSearch,setDisableFab,setOpen,
               :  
             
               <Box sx={{ flexGrow: 1 }} style={{position:"absolute", top:15,width:"60%"}}>
-              <Fab color="primary" aria-label="add" style={{marginLeft:"15%"}} disabled={disableFab}> 
+              <Fab color="primary" aria-label="add" style={{marginLeft:"15%"}} > 
                 
                 < FileUploadIcon style={{position:"absolute"}}/>
                 <input  accept="" multiple type="file" onChange={importFromExcel} style={{opacity:0}}/>
               </Fab>
-              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={exportList} disabled={disableFab}> < DownloadIcon/> </Fab>
+              <Fab color="primary" aria-label="add" style={{marginLeft:15}} onClick={exportList}> < DownloadIcon/> </Fab>
               </Box>
               
             }

@@ -31,16 +31,18 @@ function App() {
 
   //----------------- Test for PageSet --------------//
   const [testSetPage, setTestPage] = useState()  
+
+  const [searchItem, setSearchItem] = useState("")
   
   const filterItems = (searchItem) => {
-    let list = []
-        list = products.filter(
-        (item) => {
-          return item.title.toLowerCase().includes(searchItem.toLowerCase())||(item.description&&item.description.toLowerCase().includes(searchItem.toLowerCase()))
-        }
-      )
-      setSearch(list)
-    
+    setSearchItem(searchItem)
+    // let list = []
+    // list = products.filter(
+    //   (item) => {
+    //     return item.title.toLowerCase().includes(searchItem.toLowerCase())||(item.description&&item.description.toLowerCase().includes(searchItem.toLowerCase()))
+    //   }
+    // )
+    // setSearch(list)
   }
 
   
@@ -114,7 +116,18 @@ function App() {
             <Route path='/page' element ={
             <>
               <Head filterItems={filterItems} />
-              <Page products={search} setSearch={setSearch} onAscend={Ascending} onDescend={Descending} updateSearch={updateSearch} addSearch={addSearch} deletSearch={deletSearch} testSetPage={testSetPage} setProducts={setProducts}/>
+              <Page search={products} 
+                    products={search} 
+                    setSearch={setSearch} 
+                    onAscend={Ascending} 
+                    onDescend={Descending} 
+                    updateSearch={updateSearch} 
+                    addSearch={addSearch} 
+                    deletSearch={deletSearch} 
+                    testSetPage={testSetPage} 
+                    setProducts={setProducts}
+                    searchItem={searchItem}
+                    />
               {/* <AddProd /> */}
             </>
             } />

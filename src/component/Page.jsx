@@ -110,7 +110,7 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,testSetPage,setProducts}) {
+export default function CustomPaginationActionsTable({search, products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,testSetPage,setProducts, searchItem}) {
 
   const rows = products
   const [edit, setEdit] = useState(false)
@@ -140,11 +140,6 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
 
        }
   
-  useEffect(() => { 
-      console.log(numOfSearches)
-      setPage(0)
-    }, [numOfSearches]);
-
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -258,6 +253,17 @@ export default function CustomPaginationActionsTable({products,onAscend,onDescen
   }
 
   //---------------------- Test SetPage from Header ----------------------//
+
+  useEffect(() => {
+    setPage(0)
+    let list = []
+    list = search.filter(
+      (item) => {
+        return item.title.toLowerCase().includes(searchItem.toLowerCase())||(item.description&&item.description.toLowerCase().includes(searchItem.toLowerCase()))
+      }
+    )
+    setSearch(list)
+  }, [searchItem])
   
   
 
