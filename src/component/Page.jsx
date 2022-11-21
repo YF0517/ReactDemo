@@ -21,9 +21,11 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { apiPut,apiDelet} from './Service';
+import { apiPut,apiDelet,apiGet} from './Service';
 import SpamBar from './Table/SpamBar';
 import PopupPage from './Table/PopupPage';
+
+//import {picturesURL} from './Login';
 
 
 //-----------------------------------------------spambar-------------------------------------------------//
@@ -109,9 +111,57 @@ TablePaginationActions.propTypes = {
 
 
 
-export default function CustomPaginationActionsTable({search, products,onAscend,onDescend, updateSearch,addSearch,deletSearch,setSearch,setProducts, searchItem}) {
+export default function CustomPaginationActionsTable({searchItem}) {
+  const [products, setProducts] = useState([])
+  useEffect(() =>{
+    apiGet('products').then((response) => {
+      setProducts(response.data)
+       })
+  },[])
 
-  const rows = products
+
+  //search
+  const[search,setSearch] = useState([])
+  
+  useEffect(() =>{
+    console.log(products)
+    apiGet('products').then((response) => {
+    setSearch(response.data)
+     })
+  },[])
+
+
+  //change row
+  const updateSearch = (items,id) => {
+    const newState = search.map((item) => {
+                                              if(item.id === id){
+                                                return items
+                                              }
+                                              return item
+                                            })
+    setSearch(newState)
+    
+  } 
+
+  //add row
+  const addSearch = (item) => {
+    setSearch([...search, item])
+    setProducts([...products,item])
+  }
+
+  //delete row
+  const deletSearch = (id) => {
+    setSearch(search.filter((item) => item.id !== id))
+    setProducts(products.filter((item) => item.id !== id))
+  }
+
+
+
+
+
+  const picturesURL = localStorage.getItem("picturesUR")
+
+  const rows = search
   const [edit, setEdit] = useState(false)
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -249,9 +299,10 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
   //---------------------- Test SetPage from Header ----------------------//
 
   useEffect(() => {
+    
     setPage(0)
     let list = []
-    list = search.filter(
+    list = products.filter(
       (item) => {
         return item.title.toLowerCase().includes(searchItem.toLowerCase())||(item.description&&item.description.toLowerCase().includes(searchItem.toLowerCase()))
       }
@@ -272,7 +323,7 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
         
       <Table sx={{ minWidth: 500 }} aria-label="sticky table">
         <TableHead addSearch={addSearch}
-                  products={products} setDisableFab={setDisableFab} setOpen={setOpen} setSearch={setSearch} setProducts={setProducts} disableFab={disableFab} />     
+                  products={search} setDisableFab={setDisableFab} setOpen={setOpen} setSearch={setSearch} setProducts={setProducts} disableFab={disableFab} />     
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -289,7 +340,8 @@ export default function CustomPaginationActionsTable({search, products,onAscend,
                 { edit && rowId === row.id ? <input type="text" defaultValue={row.description} onChange={(e) => {setDescrip(e.target.value)}}/> : row.description}
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
-                <img style={{ width: 100 }} src={(row.product_image&&`https://app.spiritx.co.nz/storage/${row.product_image}`)} alt={row.product_image}/>
+                {/* <img style={{ width: 100 }} src={(row.product_image&&`https://app.spiritx.co.nz/storage/${row.product_image}`)} alt={row.product_image}/> */}
+                <img style={{ width: 100 }} src={(row.product_image&&`${picturesURL}${row.product_image}`)} alt={row.product_image}/>
               </TableCell>
               <TableCell style={{ width: 160 }} align="center">
                 { edit && rowId === row.id ? <input type="text" defaultValue={row.price}  onChange={(e) => {setPrice(e.target.value)}}/> : row.price}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react'; 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,8 +10,9 @@ import Typography from '@mui/material/Typography';
 import {useNavigate} from 'react-router-dom';
 
 
-
-
+// export let URLLink = "https://app.spiritx.co.nz/api/"
+// export let picturesURL = "https://app.spiritx.co.nz/storage/"
+// export let localAPI = false;
 
 export default function SearchAppBar({filterItems}) {
   const navigate = useNavigate()
@@ -35,9 +36,7 @@ export default function SearchAppBar({filterItems}) {
             <MenuIcon />
           </IconButton>
           <SearchBar filterItems={filterItems} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            
-          </Typography>
+          <Typography variant='h6' component="div" sx={{ flexGrow: 1 }}></Typography>
           <Button color="inherit" onClick={logOut}>LogOut</Button>
         </Toolbar>
       </AppBar>

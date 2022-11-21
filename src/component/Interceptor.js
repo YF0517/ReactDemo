@@ -1,23 +1,38 @@
 import {setErrorFeedback} from './Page'
+//import { localAPI } from './Login'
 
-const BaseUrl = "https://app.spiritx.co.nz/api"
 
 
+//const BaseUrl = "https://app.spiritx.co.nz/api"
+// const BaseUrl = "http://localhost:8000/api"
+let BaseUrl = localStorage.getItem("URLLink")
+let localAPI = localStorage.getItem("localAPI")
+
+export const updateInterceptorsURL = (localAPI) => {
+  console.log(localAPI)
+  if (localAPI === "true") {
+    BaseUrl = "http://localhost:8000/api/";
+  } else {
+    BaseUrl = "https://app.spiritx.co.nz/api/"
+  }
+}
 
 
 const onRequest = (config) => {
   const token = localStorage.getItem("token")
+  localAPI = localStorage.getItem("localAPI")
     config = {
       ...config, BaseUrl
     }
     if (!config.url?.includes("login")) {
-      const newConfig = {
-        ...config,
-        headers: {
-          ...config.headers,
-          'token': token
-        }
-     }
+      let newConfig = ""
+      if (localAPI === "true") {
+        console.log("addToken")
+        newConfig = {...config,headers: {...config.headers,'Authorization': 'Bearer ' + token}}
+      } else {
+        newConfig = {...config, headers: {...config.headers, "token" : token}}
+      }
+
       return newConfig
     }
     return config
@@ -26,7 +41,6 @@ const onRequest = (config) => {
 
 const onRequestError = (error) => {
   console.log(error)
-  console.log("hii")
  }
 
 

@@ -7,26 +7,27 @@ import {Route,Routes} from 'react-router-dom';
 import './component/Service'
 import { apiGet } from './component/Service';
 
-const baseURL = "https://app.spiritx.co.nz"
+//const baseURL = "https://app.spiritx.co.nz"
 
 
 function App() {
-  const [products, setProducts] = useState([])
-  useEffect(() =>{
-    apiGet('products').then((response) => {
-      setProducts(response.data)
-       })
-  },[])
+  // const [products, setProducts] = useState([])
+  // useEffect(() =>{
+  //   apiGet('products').then((response) => {
+  //     setProducts(response.data)
+  //      })
+  // },[])
 
 
-  //search
-  const[search,setSearch] = useState([])
+  // //search
+  // const[search,setSearch] = useState([])
   
-  useEffect(() =>{
-    apiGet('products').then((response) => {
-    setSearch(response.data)
-     })
-  },[])
+  // useEffect(() =>{
+  //   console.log(products)
+  //   apiGet('products').then((response) => {
+  //   setSearch(response.data)
+  //    })
+  // },[])
   
 
   //----------------- Test for PageSet --------------// 
@@ -39,29 +40,29 @@ function App() {
 
   
   
-  //change row
-  const updateSearch = (items,id) => {
-    const newState = search.map((item) => {
-                                              if(item.id === id){
-                                                return items
-                                              }
-                                              return item
-                                            })
-    setSearch(newState)
+  // //change row
+  // const updateSearch = (items,id) => {
+  //   const newState = search.map((item) => {
+  //                                             if(item.id === id){
+  //                                               return items
+  //                                             }
+  //                                             return item
+  //                                           })
+  //   setSearch(newState)
     
-  } 
+  // } 
 
-  //add row
-  const addSearch = (item) => {
-    setSearch([...search, item])
-    setProducts([...products,item])
-  }
+  // //add row
+  // const addSearch = (item) => {
+  //   setSearch([...search, item])
+  //   setProducts([...products,item])
+  // }
 
-  //delete row
-  const deletSearch = (id) => {
-    setSearch(search.filter((item) => item.id !== id))
-    setProducts(products.filter((item) => item.id !== id))
-  }
+  // //delete row
+  // const deletSearch = (id) => {
+  //   setSearch(search.filter((item) => item.id !== id))
+  //   setProducts(products.filter((item) => item.id !== id))
+  // }
 
 
   
@@ -74,20 +75,20 @@ function App() {
             <Route path='/page' element ={
             <>
               <Head filterItems={filterItems} />
-              <Page search={products} 
-                    products={search} 
-                    setSearch={setSearch} 
-                    updateSearch={updateSearch} 
-                    addSearch={addSearch} 
-                    deletSearch={deletSearch} 
-                    setProducts={setProducts}
+              <Page //search={products} 
+                    //products={search} 
+                    //setSearch={setSearch} 
+                    //updateSearch={updateSearch} 
+                    //addSearch={addSearch} 
+                    //deletSearch={deletSearch} 
+                   // setProducts={setProducts}
                     searchItem={searchItem}
                     />
               {/* <AddProd /> */}
             </>
             } />
             
-          <Route path='/' element={<Login baseUrl={baseURL}/>} />
+          <Route path='/' element={<Login />} />
 
 
           
